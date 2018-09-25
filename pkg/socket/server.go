@@ -22,12 +22,6 @@ func StartSocketServer(address string) {
 	http.ListenAndServe(address, nil)
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	requestIp := r.RemoteAddr
-	log.Infof("get request from %s", requestIp)
-	w.Write([]byte(fmt.Sprintf("Your request address is %s\n", requestIp)))
-}
-
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	var err error

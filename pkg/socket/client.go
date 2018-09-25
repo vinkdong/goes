@@ -1,8 +1,8 @@
 package socket
 
 import (
-	"net/url"
 	"github.com/vinkdong/gox/log"
+	"net/url"
 )
 
 type Client struct {

@@ -21,7 +21,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/vinkdong/goes/pkg/socket"
+	"github.com/vinkdong/goes/pkg/server"
 	"github.com/vinkdong/gox/log"
 )
 
@@ -41,11 +41,22 @@ to quickly create a Cobra application.`,
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		address, err := cmd.Flags().GetString("address")
+		next, err := cmd.Flags().GetString("redirect")
+		if redirect := os.Getenv("REDIRECT_TO"); redirect != "" {
+			next = redirect
+		}
+		version := os.Getenv("VERSION")
 		if err != nil {
 			log.Info(err)
-			address = ":9000"
 		}
-		socket.StartSocketServer(address)
+		s := server.NewServer()
+		s.Next = next
+		s.Addr = address
+		s.Version = version
+		err = s.Run()
+		if err != nil {
+			log.Error(err)
+		}
 	},
 }
 
@@ -70,6 +81,7 @@ func init() {
 	serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	serverCmd.Flags().StringP("address", "a", ":9000", "Help message for toggle")
+	serverCmd.Flags().StringP("redirect","r","","where redirect request to")
 }
 
 // initConfig reads in config file and ENV variables if set.
